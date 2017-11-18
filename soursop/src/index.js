@@ -1,5 +1,7 @@
 // import Activity from './Activity.js';
-import {toposort} from '../node_modules/toposort.js';
+// import {toposort} from '../node_modules/toposort.js';
+
+const toposort = require("toposort");
 
 function addEvent() {
   let form = document.getElementById("form1");
