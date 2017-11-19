@@ -1,5 +1,4 @@
-var http = require('http'),
-     fs = require('fs');
+var http = require('http'), fs = require('fs');
 
 
  fs.readFile('./index.html', function (err, html) {
@@ -12,3 +11,7 @@ var http = require('http'),
          response.end();
      }).listen(8080);
  });
+
+
+
+

@@ -1,78 +1,85 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <meta charset="utf-8">
-    <title></title>
-    <link rel="stylesheet" href="index.css" />
-    <script src="node_modules/chart.js/src/chart.js"></script>
-  </head>
+    <title>test page</title>
+    <script>
 
-  <body>
-    <div class="dropdown">
-      <div class="dropdown-menu">
-        <div class="dropdown-item">Test 1</div>
-      </div>
-    </div>
 
-    <div class="container">
-      <div style="padding-top: 20px" class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-          <button class="dropdown-item" type="button">Action</button>
-          <button class="dropdown-item" type="button">Another action</button>
-          <button class="dropdown-item" type="button">Something else here</button>
-        </div>
-      </div>
-    </div>
+    function sortStuff() {
 
-    <canvas id="myChart" width="400" height="400"></canvas>
-<script>
-var ctx = document.getElementById("myChart").getContext('2d');
-var myChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-      datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-          ],
-          borderColor: [
-              'rgba(255,99,132,1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-          ],
-          borderWidth: 1
-      }]
-  },
-  options: {
-      scales: {
-          yAxes: [{
-              ticks: {
-                  beginAtZero:true
-              }
-          }]
+      // First, we define our edges.
+      var graph = [
+        ['put on your shoes', 'tie your shoes']
+      , ['put on your shirt', 'put on your jacket']
+      , ['put on your shorts', 'put on your jacket']
+      , ['put on your shorts', 'put on your shoes']
+      ]
+
+      console.log(graph);
+      // Now, sort the vertices topologically, to reveal a legal execution order.
+      toposort(graph)
+      // [ 'put on your shirt'
+      // , 'put on your shorts'
+      // , 'put on your jacket'
+      // , 'put on your shoes'
+      // , 'tie your shoes' ]
+      console.log(graph);
+    }
+
+    function toposort(nodes, edges) {
+      var cursor = nodes.length
+        , sorted = new Array(cursor)
+        , visited = {}
+        , i = cursor
+
+      while (i--) {
+        if (!visited[i]) visit(nodes[i], i, [])
       }
-  }
-});
-</script>
+
+      return sorted
+
+      function visit(node, i, predecessors) {
+        if(predecessors.indexOf(node) >= 0) {
+          throw new Error('Cyclic dependency: '+JSON.stringify(node))
+        }
+
+        if (!~nodes.indexOf(node)) {
+          throw new Error('Found unknown node. Make sure to provided all involved nodes. Unknown node: '+JSON.stringify(node))
+        }
+
+        if (visited[i]) return;
+        visited[i] = true
+
+        // outgoing edges
+        var outgoing = edges.filter(function(edge){
+          return edge[0] === node
+        })
+        if (i = outgoing.length) {
+          var preds = predecessors.concat(node)
+          do {
+            var child = outgoing[--i][1]
+            visit(child, nodes.indexOf(child), preds)
+          } while (i)
+        }
+
+        sorted[--cursor] = node
+      }
+    }
+
+    function uniqueNodes(arr){
+      var res = []
+      for (var i = 0, len = arr.length; i < len; i++) {
+        var edge = arr[i]
+        if (res.indexOf(edge[0]) < 0) res.push(edge[0])
+        if (res.indexOf(edge[1]) < 0) res.push(edge[1])
+      }
+      return res
+    }
 
 
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    </script>
+  </head>
+  <body>
   </body>
 </html>
