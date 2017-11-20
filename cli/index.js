@@ -1,6 +1,6 @@
 toposort = require('toposort');
 
-slackCalcs([
+/*slackCalcs([
 	["A", 10, [], 1, 10], 
 	["H", 15, ["A"], 11, 25],
 	["B", 20, ["A"], 11, 30], 
@@ -8,7 +8,13 @@ slackCalcs([
 	["C", 5, ["B"], 31, 35], 
 	["D", 10, ["C"], 36, 45], 
 	["G", 5, ["F", "C"], 36, 40], 
-	["E", 20, ["G", "D", "H"], 46, 65]]);
+	["E", 20, ["G", "D", "H"], 46, 65]]);*/
+	
+/*slackCalcs([ [ 'A', 10, [], 1, 10 ],
+  [ 'B', 5, [ 'A' ], 11, 15 ],
+  [ 'D', 2, [ 'A' ], 11, 12 ],
+  [ 'E', 1, [ 'A' ], 11, 11 ],
+  [ 'C', 3, [ 'B' ], 16, 18 ] ]);*/
 
 /**
  * Calculates the slack times for all tasks and appends to task array
@@ -44,9 +50,20 @@ function slackCalcs(taskArray)
 		//if on the last task, LF should be same as EF
 		if (i == tasks.length - 1)
 		{
-			LF = EF;
-			LS = LF - dur + 1;
-			slack = LF - EF
+			//if end task isn't a blank node
+			if (dur != 0)
+			{
+				LF = EF;
+				LS = LF - dur + 1;
+				slack = LF - EF
+			}
+			//end task is blank node, don't add free float
+			else
+			{
+				LF = EF;
+				LS = LF - dur;
+				slack = LF - EF
+			}
 		}
 		//otherwise find min LS of successors to get LF
 		else
