@@ -45,7 +45,7 @@ function slackCalcs(taskArray)
 		if (i == tasks.length - 1)
 		{
 			LF = EF;
-			LS = LF - dur;
+			LS = LF - dur + 1;
 			slack = LF - EF
 		}
 		//otherwise find min LS of successors to get LF
@@ -66,8 +66,8 @@ function slackCalcs(taskArray)
 					}
 				}
 			}
-			LF = min;
-			LS = LF - dur;
+			LF = min - 1;
+			LS = LF - dur + 1;
 			slack = LF - EF;
 		}
 		task.push(LS, LF, slack);
