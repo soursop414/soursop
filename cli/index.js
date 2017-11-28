@@ -1,17 +1,29 @@
 toposort = require('toposort');
 
-function criticalPath(taskArray) {
+criticalPath();
+
+function criticalPath() {
     const toposort = require("toposort");
     const Task = require("critical-path").Task;
 
+    // var taskA = new Task({cost: 10, name: 'A', duration: 10});
+    // var taskB = new Task({cost: 20, depends: [taskA], name: 'B', duration: 20});
+    // var taskC = new Task({cost: 5, depends: [taskB], name: 'C', duration: 5});
+    // var taskD = new Task({cost: 10, depends: [taskC], name: 'D', duration: 10});
+    // var taskF = new Task({cost: 15, depends: [taskA], name: 'F', duration: 15});
+    // var taskG = new Task({cost: 5, depends: [taskC, taskF], name: 'G', duration: 5});
+    // var taskH = new Task({cost: 15, depends: [taskA], name: 'H', duration: 15});
+    // var taskE = new Task({cost: 20, depends: [taskD, taskG, taskH], name: 'E', duration: 20});
+
     var taskA = new Task({cost: 10, name: 'A', duration: 10});
-    var taskB = new Task({cost: 20, depends: [taskA], name: 'B', duration: 20});
-    var taskC = new Task({cost: 5, depends: [taskB], name: 'C', duration: 5});
-    var taskD = new Task({cost: 10, depends: [taskC], name: 'D', duration: 10});
-    var taskF = new Task({cost: 15, depends: [taskA], name: 'F', duration: 15});
-    var taskG = new Task({cost: 5, depends: [taskC, taskF], name: 'G', duration: 5});
-    var taskH = new Task({cost: 15, depends: [taskA], name: 'H', duration: 15});
-    var taskE = new Task({cost: 20, depends: [taskD, taskG, taskH], name: 'E', duration: 20});
+    var taskB = new Task({cost: 5, depends: [taskA], name: 'B', duration: 5});
+    var taskC = new Task({cost: 3, depends: [taskB, taskD, taskE], name: 'C', duration: 3});
+    var taskD = new Task({cost: 2, depends: [taskA], name: 'D', duration: 2});
+    var taskE = new Task({cost: 1, depends:[taskA], name:'E', duration: 1});
+    var testTaskArray = [taskA, taskB, taskC, taskD, taskE];
+
+    console.log(testTaskArray);
+    console.log(criticalPath(testTaskArray));
 
     /*
     taskA.completeBefore = [taskB, taskF, taskH];
@@ -24,7 +36,7 @@ function criticalPath(taskArray) {
     taskH.completeBefore = [taskE];
     */
 
-    var taskArray = [taskA, taskB, taskC, taskD, taskE, taskF, taskG, taskH];
+    // var taskArray = [taskA, taskB, taskC, taskD, taskE, taskF, taskG, taskH];
     var edgeArray = [];
     var taskList = [];
 
