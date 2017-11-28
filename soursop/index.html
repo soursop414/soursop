@@ -1,85 +1,47 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>test page</title>
-    <script>
+<head>
+  <title>Timeline Event Planner</title>
 
-
-    function sortStuff() {
-
-      // First, we define our edges.
-      var graph = [
-        ['put on your shoes', 'tie your shoes']
-      , ['put on your shirt', 'put on your jacket']
-      , ['put on your shorts', 'put on your jacket']
-      , ['put on your shorts', 'put on your shoes']
-      ]
-
-      console.log(graph);
-      // Now, sort the vertices topologically, to reveal a legal execution order.
-      toposort(graph)
-      // [ 'put on your shirt'
-      // , 'put on your shorts'
-      // , 'put on your jacket'
-      // , 'put on your shoes'
-      // , 'tie your shoes' ]
-      console.log(graph);
+  <style type="text/css">
+    body, html {
+      font-family: sans-serif;
     }
+  </style>
 
-    function toposort(nodes, edges) {
-      var cursor = nodes.length
-        , sorted = new Array(cursor)
-        , visited = {}
-        , i = cursor
+  <script src="node_modules/vis/dist/vis.js"></script>
+  <link href="node_modules/vis/dist/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+  
+</head>
+<body>
 
-      while (i--) {
-        if (!visited[i]) visit(nodes[i], i, [])
-      }
+<div id="visualization"></div>
 
-      return sorted
+<script type="text/javascript">
+  // DOM element where the Timeline will be attached
+  var container = document.getElementById('visualization');
 
-      function visit(node, i, predecessors) {
-        if(predecessors.indexOf(node) >= 0) {
-          throw new Error('Cyclic dependency: '+JSON.stringify(node))
-        }
+  // Create a DataSet (allows two way data-binding)
+  var items = new vis.DataSet([
+    {id: 1, content: 'item 1', start: '2014-04-20', end: '2014-04-22'},
+    {id: 2, content: 'item 2', start: '2014-04-14', end: '2014-04-16'},
+    {id: 3, content: 'item 3', start: '2014-04-18', end: '2014-04-19'},
+    {id: 4, content: 'item 4', start: '2014-04-16', end: '2014-04-18'},
+    {id: 5, content: 'item 5', start: '2014-04-25', end: '2014-04-26'},
+  ]);
 
-        if (!~nodes.indexOf(node)) {
-          throw new Error('Found unknown node. Make sure to provided all involved nodes. Unknown node: '+JSON.stringify(node))
-        }
+  // Configuration for the Timeline
+  var options = {};
 
-        if (visited[i]) return;
-        visited[i] = true
-
-        // outgoing edges
-        var outgoing = edges.filter(function(edge){
-          return edge[0] === node
-        })
-        if (i = outgoing.length) {
-          var preds = predecessors.concat(node)
-          do {
-            var child = outgoing[--i][1]
-            visit(child, nodes.indexOf(child), preds)
-          } while (i)
-        }
-
-        sorted[--cursor] = node
-      }
-    }
-
-    function uniqueNodes(arr){
-      var res = []
-      for (var i = 0, len = arr.length; i < len; i++) {
-        var edge = arr[i]
-        if (res.indexOf(edge[0]) < 0) res.push(edge[0])
-        if (res.indexOf(edge[1]) < 0) res.push(edge[1])
-      }
-      return res
-    }
-
-
-    </script>
-  </head>
-  <body>
-  </body>
+  // Create a Timeline
+  var timeline = new vis.Timeline(container, items, options);
+  
+  //onclick
+  timeline.on('click', function (properties) 
+  {
+	console.log(properties.content);
+  });
+	
+</script>
+</body>
 </html>
