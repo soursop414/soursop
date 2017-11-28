@@ -1,20 +1,45 @@
 toposort = require('toposort');
 
 /*slackCalcs([
-	["A", 10, [], 1, 10], 
+	["A", 10, [], 1, 10],
 	["H", 15, ["A"], 11, 25],
-	["B", 20, ["A"], 11, 30], 
-	["F", 15, ["A"], 11, 25],	
-	["C", 5, ["B"], 31, 35], 
-	["D", 10, ["C"], 36, 45], 
-	["G", 5, ["F", "C"], 36, 40], 
+	["B", 20, ["A"], 11, 30],
+	["F", 15, ["A"], 11, 25],
+	["C", 5, ["B"], 31, 35],
+	["D", 10, ["C"], 36, 45],
+	["G", 5, ["F", "C"], 36, 40],
 	["E", 20, ["G", "D", "H"], 46, 65]]);*/
-	
+
 /*slackCalcs([ [ 'A', 10, [], 1, 10 ],
   [ 'B', 5, [ 'A' ], 11, 15 ],
   [ 'D', 2, [ 'A' ], 11, 12 ],
   [ 'E', 1, [ 'A' ], 11, 11 ],
   [ 'C', 3, [ 'B' ], 16, 18 ] ]);*/
+
+var testTaskArray = [[
+		["A", 10, [], 1, 10],
+		["B", 5, ["A"], 11, 16],
+		["D", 2, ["A"], 11, 12],
+		["E", 1, ["A"], 11, 11],
+		["C", 3, ["B", "D", "E"], 17, 19],
+	],
+		[["A", 10, [], 1, 10],
+		["H", 15, ["A"], 11, 25],
+		["B", 20, ["A"], 11, 30],
+		["F", 15, ["A"], 11, 25],
+		["C", 5, ["B"], 31, 35],
+		["D", 10, ["C"], 36, 45],
+		["G", 5, ["F", "C"], 36, 40],
+		["E", 20, ["G", "D", "H"], 46, 65]]
+	];
+
+// Test 1
+console.log(testTaskArray[0]);
+slackCalcs(testTaskArray[0]);
+
+// Test 2
+console.log(testTaskArray[1]);
+slackCalcs(testTaskArray[1]);
 
 /**
  * Calculates the slack times for all tasks and appends to task array
@@ -35,18 +60,18 @@ function slackCalcs(taskArray)
 	var LS; //late finish time
 	var LF; //late start time
 	var slack; //slack time
-	
+
 	//process tasks in reverse
 	for (var i = tasks.length - 1; i >= 0; i--)
 	{
 		//initialize stuff
 		task = tasks[i];
 		name = task[0];
-		dur = task[1]; 
+		dur = task[1];
 		dep = task[2];
-		ES = task[3]; 
+		ES = task[3];
 		EF = task[4];
-		
+
 		//if on the last task, LF should be same as EF
 		if (i == tasks.length - 1)
 		{
@@ -75,7 +100,7 @@ function slackCalcs(taskArray)
 				var successorTask = doneTasks[j];
 				//check dependencies of successor task for current task
 				if (successorTask[2].includes(name))
-				{	
+				{
 					//find min LS
 					if (successorTask[5] < min)
 					{
