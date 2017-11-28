@@ -1,62 +1,81 @@
 toposort = require('toposort');
 
-function criticalPath(taskArray) {
-    const toposort = require("toposort");
-    const Task = require("critical-path").Task;
+function criticalPath(inputArray) {
 
-    var taskA = new Task({cost: 10, name: 'A', duration: 10});
-    var taskB = new Task({cost: 20, depends: [taskA], name: 'B', duration: 20});
-    var taskC = new Task({cost: 5, depends: [taskB], name: 'C', duration: 5});
-    var taskD = new Task({cost: 10, depends: [taskC], name: 'D', duration: 10});
-    var taskF = new Task({cost: 15, depends: [taskA], name: 'F', duration: 15});
-    var taskG = new Task({cost: 5, depends: [taskC, taskF], name: 'G', duration: 5});
-    var taskH = new Task({cost: 15, depends: [taskA], name: 'H', duration: 15});
-    var taskE = new Task({cost: 20, depends: [taskD, taskG, taskH], name: 'E', duration: 20});
+    var taskArray = [];
+    var depenendencySums = [];
 
-    /*
-    taskA.completeBefore = [taskB, taskF, taskH];
-    taskB.completeBefore = [taskC];
-    taskC.completeBefore = [taskD, taskG];
-    taskD.completeBefore = [taskE];
-    taskE.completeBefore = [];
-    taskF.completeBefore = [taskG];
-    taskG.completeBefore = [taskE];
-    taskH.completeBefore = [taskE];
-    */
+    for(var i = 0; i < inputArray.length; i++) {
 
-    var taskArray = [taskA, taskB, taskC, taskD, taskE, taskF, taskG, taskH];
-    var edgeArray = [];
-    var taskList = [];
+      taskArray[i].name = inputArray[i][0];
+      taskArray[i].duration = inputArray[i][1];
 
-    for (var i = 0; i < taskArray.length; i++) {
-        for (var j = 0; j < taskArray[i].completeBefore.length; j++) {
-            edgeArray.push([taskArray[i].name, taskArray[i].completeBefore[j].name]);
+      for(var j = 0; j < inputArray[i][2].length; j++) {
+        taskArray[i].dependencies.push(inputArray[i][2][j]);
+      }
+    }
+
+    for(var i = 0; i < taskArray.length; i++) {
+
+      depenendencySums = [];
+      node = taskArray[i];
+      sum = node.duration;
+
+      if (node.dependencies.length > 1) {
+        for(var j = 0; j < node.dependencies.length; j++) {
+          node = taskArray[i];
+          while(node != null) {
+            //taskArray[i].dependencies[0][0] referencies the name of the dependency
+            node = nodeWithName(taskArray, taskArray[i].dependencies[0][0]);
+            sum += node.duration;
+          }
+          dependencySums.push(sum);
+          sum = 0;
         }
+        sum = Math.max(dependencySums);
+      } else {
+        while(node != null) {
+          //taskArray[i].dependencies[0][0] referencies the name of the dependency
+          node = nodeWithName(taskArray, taskArray[i].dependencies[0][0]);
+          sum += node.duration;
+        }
+      }
+
+      node = taskArray[i];
+
+      node.EF = sum;
+      node.ES = sum - node.duration - 1;
     }
 
-    toposort(edgeArray);
 
-    for (var i = 0; i < taskArray.length; i++) {
-        taskList.push([taskArray[i].name, taskArray[i].duration, taskArray[i].depends,
-            calculateES(taskArray[i]) - taskArray[i].duration + 1, calculateES(taskArray[i])]);
+    var holePosition = 0;
+    var valueToInsert = 0;
+
+    for(var i = 0; i < taskArray.length; i++) {
+      /* select value to be inserted */
+      valueToInsert = taskArray[i];
+      holePosition = i;
+
+      /*locate hole position for the element to be inserted */
+
+      while(holePosition >= 0 && taskArray[holePosition-1].ES > valueToInsert.ES) {
+        taskArray[holePosition] = taskArray[holePosition - 1];
+        holePosition = holePosition - 1;
+      }
+
+      /* insert the number at hole position */
+      taskArray[holePosition] = valueToInsert;
     }
 
-    return taskList;
+    return taskArray;
 }
 
-function calculateES(task) {
-
-    var ESList = [];
-
-    if (task.depends.length == 0) {
-        return task.duration;
+function nodeWithName(array, name) {
+  for(var i = 0; i < array.length; i++) {
+    if(array[i].name == name) {
+      return array[i];
     }
-
-    for (var i = 0; i < task.depends.length; i++) {
-        ESList.push(calculateES(task.depends[i]))
-    }
-
-    return Math.min.apply(null, ESList) + task.duration;
+  }
 }
 
 function test() {
