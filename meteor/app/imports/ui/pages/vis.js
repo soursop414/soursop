@@ -1,10 +1,11 @@
+/* global document */
+
 import { Template } from 'meteor/templating';
 import { DataSet, Timeline } from 'vis';
 
 
 Template.Vis.onRendered(function onRendered() {
   // DOM element where the Timeline will be attached
-  console.log(this);
   const container = document.getElementById('visualization');
 
   // Create a DataSet (allows two way data-binding)
@@ -27,7 +28,6 @@ Template.Vis.onRendered(function onRendered() {
   // Configuration for the Timeline
   const options = {};
 
-  console.log(container);
   // Create a Timeline
   const timeline = new Timeline(container, items, options);
 
