@@ -14,13 +14,13 @@ export const EventDataSchema = new SimpleSchema({
     label: 'Name',
     type: String,
   },
-  start: {
-    label: 'Start',
+  startDate: {
+    label: 'StartDate',
     type: Date,
   },
-  duration: {
-    label: 'Duration',
-    type: Number,
+  endDate: {
+    label: 'EndDate',
+    type: Date,
   },
 }, { tracker: Tracker });
 

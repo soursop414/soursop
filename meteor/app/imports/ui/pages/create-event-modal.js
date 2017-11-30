@@ -16,11 +16,6 @@ Template.Create_Event_Modal.onCreated(function onCreated() {
   this.context = createContext;
 });
 
-Template.Create_Event_Modal.onRendered(function enableSemantic() {
-  const instance = this;
-  instance.$('#example2').calendar({ type: 'date' });
-});
-
 
 Template.Create_Event_Modal.helpers({
   successClass() {
@@ -36,38 +31,41 @@ Template.Create_Event_Modal.helpers({
     const errorKeys = Template.instance().context.invalidKeys();
     return _.find(errorKeys, (keyObj) => keyObj.name === fieldName);
   },
+  EventData() {
+    return EventData.find();
+  },
 });
 
+Template.Create_Event_Modal.onRendered(function enableSemantic() {
+  const instance = this;
+  instance.$('#dependencies').dropdown();
+});
 
 Template.Create_Event_Modal.events({
   'submit .create-event-form'(event, instance) {
     event.preventDefault();
     // Get name (text field)
     const name = event.target.Name.value;
-    // Get level (radio buttons, exactly one)
-    const month = event.target.Month.value;
-    const day = event.target.Day.value;
-    const year = event.target.Year.value;
-    const duration = event.target.Duration.value;
-    const date = `${year}-${month}-${day}`;
+    const startDate = event.target.startDate.value;
+    const endDate = event.target.endDate.value;
+    const dependencies = $('#dependencies').dropdown('get value');
+    console.log(dependencies);
 
-    const newEventData = { name, date, duration };
-    console.log(newEventData);
+    const newEventData = { name, startDate, endDate };
     // Clear out any old validation errors.
     instance.context.resetValidation();
     // Invoke clean so that newStudentData reflects what will be inserted.
     const cleanData = EventDataSchema.clean(newEventData);
     // Determine validity.
     instance.context.validate(cleanData);
-    if (instance.context.isValid()) {
-      console.log('valid');
+    if (instance.context.isValid() && (startDate < endDate)) {
       const id = EventData.insert(cleanData);
       instance.messageFlags.set(displaySuccessMessage, id);
       instance.messageFlags.set(displayErrorMessages, false);
       instance.find('form').reset();
-      instance.$('.dropdown').dropdown('restore defaults');
+      $('#create-event-modal').modal('hide');
+      $('#dependencies').dropdown('clear');
     } else {
-      console.log('not valid');
       instance.messageFlags.set(displaySuccessMessage, false);
       instance.messageFlags.set(displayErrorMessages, true);
     }
