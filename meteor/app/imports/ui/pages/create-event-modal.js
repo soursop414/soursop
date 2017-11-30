@@ -9,6 +9,10 @@ const displaySuccessMessage = 'displaySuccessMessage';
 const displayErrorMessages = 'displayErrorMessages';
 const createContext = EventDataSchema.namedContext('Create_Event_Modal');
 
+function calcDuration(date2, date1) {
+  return Math.round(Math.abs((date2 - date1) / (24 * 60 * 60 * 1000)));
+}
+
 Template.Create_Event_Modal.onCreated(function onCreated() {
   this.messageFlags = new ReactiveDict();
   this.messageFlags.set(displaySuccessMessage, false);
@@ -34,9 +38,6 @@ Template.Create_Event_Modal.helpers({
   EventData() {
     return EventData.find();
   },
-  calcDuration(date2, date1) {
-    return Math.round(Math.abs((date2.getTime() - date1.getTime()) / (24 * 60 * 60 * 1000)));
-  },
 });
 
 Template.Create_Event_Modal.onRendered(function enableSemantic() {
@@ -49,12 +50,17 @@ Template.Create_Event_Modal.events({
     event.preventDefault();
     // Get name (text field)
     const name = event.target.Name.value;
-    const startDate = event.target.startDate.value;
-    const endDate = event.target.endDate.value;
-    const dependencies = $('#dependencies').dropdown('get value');
-    console.log(dependencies);
+    const startDate = Date.parse(event.target.startDate.value);
+    const endDate = Date.parse(event.target.endDate.value);
+    const dependenciesValue = $('#dependencies').dropdown('get value');
+    const dependencies = [];
+    const duration = calcDuration(startDate, endDate);
 
-    const newEventData = { name, startDate, endDate };
+    for (let i = 0; i < dependenciesValue.length - 1; i++) {
+      dependencies.push(dependenciesValue[i]);
+    }
+
+    const newEventData = { name, startDate, endDate, duration, dependencies };
     // Clear out any old validation errors.
     instance.context.resetValidation();
     // Invoke clean so that newStudentData reflects what will be inserted.
