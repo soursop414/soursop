@@ -1,9 +1,9 @@
-slackCalcs(criticalPath([ [ 'A', 10, [], 1, 10 ],
+/*slackCalcs(criticalPath([ [ 'A', 10, [], 1, 10 ],
   [ 'B', 5, [ 'A' ], 11, 16 ],
   [ 'D', 2, [ 'A' ], 11, 12 ],
   [ 'E', 1, [ 'A' ], 11, 11 ],
   [ 'C', 3, [ 'B', 'D', 'E' ], 17, 19 ] ]
-));
+));*/
 
 function criticalPath(inputArray) {
     var taskArray = [];
@@ -39,20 +39,6 @@ function criticalPath(inputArray) {
       /* insert the number at hole position */
       taskArray[holePosition] = valueToInsert;
     }
-
-	var cp = '';
-	for(var i = 0; i < taskArray.length; i++)
-	{	
-		if (i == taskArray.length - 1) 
-		{ 
-			cp += taskArray[i].name; 
-		}
-		else
-		{
-			cp += taskArray[i].name + ' -> ';
-		}
-	}
-	console.log('Critical Path: ' + cp);
     return taskArray;
 }
 
@@ -93,7 +79,7 @@ function nodeWithName(array, name) {
   }
 }
 
-/*var testTaskArray = [[
+var testTaskArray = [[
 { name: 'A', duration: 10, dependencies: [], ES: 1, EF: 10 },
 { name: 'B', duration: 5, dependencies: ['A'], ES: 11, EF: 16 },
 { name: 'D', duration: 2, dependencies: ['A'], ES: 11, EF: 12 },
@@ -116,7 +102,7 @@ slackCalcs(testTaskArray[0]);
 
 // Test 2
 console.log(testTaskArray[1]);
-slackCalcs(testTaskArray[1]);*/
+slackCalcs(testTaskArray[1]);
 
 /**
  * Calculates the slack times for all tasks and appends to task array
@@ -195,5 +181,24 @@ function slackCalcs(taskArray)
 		doneTasks.push(task);
 	}
 	console.log(tasks);
+	
+	var cp = '';
+	//loop through the tasks
+	for(var i = 0; i < tasks.length; i++)
+	{
+		//no slack means cp
+		if(tasks[i].slack == 0)
+		{
+			if (i == tasks.length - 1) 
+			{ 
+				cp += taskArray[i].name; 
+			}
+			else
+			{
+				cp += taskArray[i].name + ' -> ';
+			}
+		}
+	}
+	console.log('Critical Path: ' + cp);
 	return tasks;
 }
