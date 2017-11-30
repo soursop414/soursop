@@ -52,16 +52,22 @@ function recursiveAddition(array, node) {
   if(node.dependencies.length == 0) {
     return duration;
   }else {
-      if(node.dependencies.length == 1) {
+      if(node.dependencies.length <= 1) {
         node = nodeWithName(array, node.dependencies[0]);
         return duration + recursiveAddition(array, node);
       } else {
-        for(var j = 0; j < node.dependencies.length; j++) {
-          node = nodeWithName(array, node.dependencies[j]);
-          dependencySums.push(recursiveAddition(array, node));
+        let originalNodeDependenciesLength = node.dependencies.length;
+        let originalNode = node;
+        let max = -1;
+        for(var j = 0; j < originalNodeDependenciesLength; j++) {
+          dependencySums.push(recursiveAddition(array, nodeWithName(array, originalNode.dependencies[j])));
         }
-        return duration + Math.max(dependencySums);
-      }
+        
+        max = dependencySums.reduce(function(a, b) {
+          return Math.max(a, b);
+        });
+        return duration + max;
+    }
   }
 }
 
@@ -72,7 +78,7 @@ function nodeWithName(array, name) {
       return array[i];
     }
   }
-  
+
 /*slackCalcs([
 	["A", 10, [], 1, 10],
 	["H", 15, ["A"], 11, 25],
