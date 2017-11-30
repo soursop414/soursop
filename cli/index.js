@@ -1,9 +1,25 @@
-/*slackCalcs(criticalPath([ [ 'A', 10, [], 1, 10 ],
-  [ 'B', 5, [ 'A' ], 11, 16 ],
-  [ 'D', 2, [ 'A' ], 11, 12 ],
-  [ 'E', 1, [ 'A' ], 11, 11 ],
-  [ 'C', 3, [ 'B', 'D', 'E' ], 17, 19 ] ]
-));*/
+var testTaskArray = [[
+[ 'A', 10, [] ],
+[ 'B', 5, ['A'] ],
+[ 'D', 2, ['A'] ],
+[ 'E', 1, ['A'] ],
+[ 'C', 3, ['B', 'D', 'E'] ]
+],
+[[ 'A', 10, [] ],
+[ 'H', 15, ['A'] ],
+[ 'B', 20, ['A'] ],
+[ 'F', 15, ['A'] ],
+[ 'C', 5, ['B'] ],
+[ 'D', 10, ['C'] ],
+[ 'G', 5, ['F', 'C'] ],
+[ 'E', 20, ['G', 'D', 'H'] ]
+]];
+
+//Test 1
+slackCalcs(criticalPath(testTaskArray[0]));
+
+//Test 2
+slackCalcs(criticalPath(testTaskArray[1]));
 
 function criticalPath(inputArray) {
     var taskArray = [];
@@ -22,8 +38,10 @@ function criticalPath(inputArray) {
 
   /* set the early start and early finish fields to the recursively added dependency durations */
   for(var i = 0; i < taskArray.length; i++) {
-    taskArray[i].EF = recursiveAddition(taskArray, taskArray[i]);
-    taskArray[i].ES = taskArray[i].EF - taskArray[i].duration + 1;
+	var EF = recursiveAddition(taskArray, taskArray[i]);
+    var ES = EF - taskArray[i].duration + 1;
+	taskArray[i].ES = ES;
+	taskArray[i].EF = EF;
   }
 
     /* insertion sort based on the early start times of tasks to get the topological sort */
@@ -54,8 +72,12 @@ function recursiveAddition(array, node) {
 /* base case */
   if(node.dependencies.length == 0) {
     return duration;
+<<<<<<< HEAD
   }else {
     /* if there is only one task in its dependency */
+=======
+  } else {
+>>>>>>> 4df1ba3877608543461de84f5cf0c57737e9c72e
       if(node.dependencies.length <= 1) {
         node = nodeWithName(array, node.dependencies[0]);
         return duration + recursiveAddition(array, node);
@@ -80,7 +102,10 @@ function recursiveAddition(array, node) {
   }
 }
 
+<<<<<<< HEAD
 /* retrieve the node with the name field name */
+=======
+>>>>>>> 4df1ba3877608543461de84f5cf0c57737e9c72e
 function nodeWithName(array, name) {
   for(var i = 0; i < array.length; i++) {
     if(array[i].name == name) {
@@ -89,12 +114,12 @@ function nodeWithName(array, name) {
   }
 }
 
-var testTaskArray = [[
+/*var testTaskArray = [[
 { name: 'A', duration: 10, dependencies: [], ES: 1, EF: 10 },
-{ name: 'B', duration: 5, dependencies: ['A'], ES: 11, EF: 16 },
+{ name: 'B', duration: 5, dependencies: ['A'], ES: 11, EF: 15 },
 { name: 'D', duration: 2, dependencies: ['A'], ES: 11, EF: 12 },
 { name: 'E', duration: 1, dependencies: ['A'], ES: 11, EF: 11 },
-{ name: 'C', duration: 3, dependencies: ['B', 'D', 'E'], ES: 17, EF: 19 }
+{ name: 'C', duration: 3, dependencies: ['B', 'D', 'E'], ES: 16, EF: 18 }
 ],
 [{ name: 'A', duration: 10, dependencies: [], ES: 1, EF: 10 },
 { name: 'H', duration: 15, dependencies: ['A'], ES: 11, EF: 25 },
@@ -107,12 +132,12 @@ var testTaskArray = [[
 ]];
 
 // Test 1
-console.log(testTaskArray[0]);
-slackCalcs(testTaskArray[0]);
+//console.log(testTaskArray[0]);
+//slackCalcs(testTaskArray[0]);
 
 // Test 2
-console.log(testTaskArray[1]);
-slackCalcs(testTaskArray[1]);
+//console.log(testTaskArray[1]);
+//slackCalcs(testTaskArray[1]);*/
 
 /**
  * Calculates the slack times for all tasks and appends to task array
