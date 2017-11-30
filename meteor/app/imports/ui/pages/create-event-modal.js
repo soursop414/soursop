@@ -34,6 +34,9 @@ Template.Create_Event_Modal.helpers({
   EventData() {
     return EventData.find();
   },
+  calcDuration(date2, date1) {
+    return Math.round(Math.abs((date2.getTime() - date1.getTime()) / (24 * 60 * 60 * 1000)));
+  },
 });
 
 Template.Create_Event_Modal.onRendered(function enableSemantic() {
