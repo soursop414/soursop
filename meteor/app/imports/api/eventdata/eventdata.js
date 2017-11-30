@@ -22,6 +22,15 @@ export const EventDataSchema = new SimpleSchema({
     label: 'EndDate',
     type: Date,
   },
+  duration: {
+    label: 'Duration',
+    type: Number,
+  },
+  dependencies: {
+    label: 'Dependencies',
+    type: [String],
+    optional: true,
+  },
 }, { tracker: Tracker });
 
 EventData.attachSchema(EventDataSchema);
