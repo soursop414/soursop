@@ -1,6 +1,6 @@
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
-// import { _ } from 'meteor/underscore';
+import { _ } from 'meteor/underscore';
 import { EventData, EventDataSchema } from '../../api/eventdata/eventdata.js';
 
 /* eslint-disable no-param-reassign */
@@ -15,6 +15,12 @@ Template.Create_Event_Modal.onCreated(function onCreated() {
   this.messageFlags.set(displayErrorMessages, false);
   this.context = createContext;
 });
+
+Template.Create_Event_Modal.onRendered(function enableSemantic() {
+  const instance = this;
+  instance.$('#example2').calendar({ type: 'date' });
+});
+
 
 Template.Create_Event_Modal.helpers({
   successClass() {
