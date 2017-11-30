@@ -3,9 +3,9 @@ import { DataSet, Timeline } from 'vis';
 
 
 Template.Vis.onRendered(function onRendered() {
-
   // DOM element where the Timeline will be attached
-  const container = this.document.getElementById('visualization');
+  console.log(this);
+  const container = document.getElementById('visualization');
 
   // Create a DataSet (allows two way data-binding)
   const items = new DataSet([
@@ -37,5 +37,4 @@ Template.Vis.onRendered(function onRendered() {
   console.log(properties.item);
   //timeline.setItems(newItems); //can edit the dataset
   });
-
 });
