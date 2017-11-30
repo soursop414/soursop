@@ -8,7 +8,10 @@
 function criticalPath(inputArray) {
     var taskArray = [];
     var depenendencySums = [];
+    var holePosition = 0;
+    var valueToInsert = 0;
 
+    /* initialize taskArray fields based on user input */
     for(var i = 0; i < inputArray.length; i++) {
       taskArray[i] = {};
       //taskArray[i].dependencies = [];
@@ -17,13 +20,13 @@ function criticalPath(inputArray) {
       taskArray[i].dependencies = inputArray[i][2];
     }
 
+  /* set the early start and early finish fields to the recursively added dependency durations */
   for(var i = 0; i < taskArray.length; i++) {
     taskArray[i].EF = recursiveAddition(taskArray, taskArray[i]);
     taskArray[i].ES = taskArray[i].EF - taskArray[i].duration + 1;
   }
 
-    var holePosition = 0;
-    var valueToInsert = 0;
+    /* insertion sort based on the early start times of tasks to get the topological sort */
 
     for(var i = 1; i < taskArray.length; i++) {
       /* select value to be inserted */
@@ -42,26 +45,33 @@ function criticalPath(inputArray) {
     return taskArray;
 }
 
+/* returns the sum of a task's duration along with that of its dependencies */
 function recursiveAddition(array, node) {
-
   var duration = node.duration;
   var dependencySums = [];
   var sum = 0;
 
+/* base case */
   if(node.dependencies.length == 0) {
     return duration;
   }else {
+    /* if there is only one task in its dependency */
       if(node.dependencies.length <= 1) {
         node = nodeWithName(array, node.dependencies[0]);
         return duration + recursiveAddition(array, node);
       } else {
+        /* more than one task in its dependency, it will take the task with the larger
+        recursiveAddition result for its ES */
         let originalNodeDependenciesLength = node.dependencies.length;
         let originalNode = node;
         let max = -1;
+
+
         for(var j = 0; j < originalNodeDependenciesLength; j++) {
           dependencySums.push(recursiveAddition(array, nodeWithName(array, originalNode.dependencies[j])));
         }
-        
+
+        /* callback function to get the max from dependencySums */
         max = dependencySums.reduce(function(a, b) {
           return Math.max(a, b);
         });
@@ -70,7 +80,7 @@ function recursiveAddition(array, node) {
   }
 }
 
-
+/* retrieve the node with the name field name */
 function nodeWithName(array, name) {
   for(var i = 0; i < array.length; i++) {
     if(array[i].name == name) {
@@ -94,7 +104,7 @@ var testTaskArray = [[
 { name: 'D', duration: 10, dependencies: ['C'], ES: 36, EF: 45 },
 { name: 'G', duration: 5, dependencies: ['F', 'C'], ES: 36, EF: 40 },
 { name: 'E', duration: 20, dependencies: ['G', 'D', 'H'], ES: 46, EF: 65 }
-]];	
+]];
 
 // Test 1
 console.log(testTaskArray[0]);
@@ -181,7 +191,7 @@ function slackCalcs(taskArray)
 		doneTasks.push(task);
 	}
 	console.log(tasks);
-	
+
 	var cp = '';
 	//loop through the tasks
 	for(var i = 0; i < tasks.length; i++)
@@ -189,9 +199,9 @@ function slackCalcs(taskArray)
 		//no slack means cp
 		if(tasks[i].slack == 0)
 		{
-			if (i == tasks.length - 1) 
-			{ 
-				cp += taskArray[i].name; 
+			if (i == tasks.length - 1)
+			{
+				cp += taskArray[i].name;
 			}
 			else
 			{
