@@ -1,5 +1,19 @@
 <template name="App_Body">
-  {{> Header}}
-  {{>Template.dynamic template=main}}
-  <!-- {{> Footer}} -->
+    <div style="
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: black; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#000000, #434957); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#000000, #434957); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#000000, #434957); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#000000, #434957);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;">
+
+        {{> Header}}
+        {{>Template.dynamic template=main}}
+        <!-- {{> Footer}} -->
+    </div>
 </template>

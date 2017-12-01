@@ -1,51 +1,52 @@
 <template name="Create_Event_Modal">
-  <div class="ui segment">
-    <h2 class="ui dividing header">Create a New Node</h2>
-    <form class="ui form create-event-form  {{ successClass }} {{ errorClass }}">
-      <div class="five wide field">
-        <label>Name</label>
-        <input type="text" name="Name" placeholder="Name">
-      </div>
-      {{#if displayFieldError 'name' }}
-        <div class="ui error message">
-          <p>Please specify the name of this event.</p>
-        </div>
-      {{/if}}
-
-      <h4 class="ui dividing header">Date</h4>
-      <div class="two fields">
-        <div class="field">
-          <label>Start Date</label>
-          <input name="startDate" type="date">
-          {{#if displayFieldError 'startDate' }}
-            <div class="ui error message">
-              <p>Please specify the start date of this event.</p>
+    <div class="ui red segment" style="background: #2e3644;">
+        <h2 class="ui dividing header" style="color: #c4c4c4;">Create a New Node</h2>
+        <form class="ui form create-event-form  {{ successClass }} {{ errorClass }}">
+            <div class="five red wide field">
+                <label style="color: red;">Name</label>
+                <input type="text" name="Name" placeholder="Name" style="color: red; background-color : #5c6275;">
             </div>
-          {{/if}}
-        </div>
-
-        <div class="field">
-          <label>End Date</label>
-          <input name="endDate" type="date">
-          {{#if displayFieldError 'endDate' }}
+            {{#if displayFieldError 'name' }}
             <div class="ui error message">
-              <p>Please specify the end date of this event.</p>
+                <p>Please specify the name of this event.</p>
             </div>
-          {{/if}}
-        </div>
-      </div>
+            {{/if}}
 
-      <h4 class="ui dividing header">Dependencies</h4>
-      <div class="field">
-        <select multiple="" class="ui dropdown" id="dependencies" name="dependencies">
-          <option value="">Select Dependencies</option>
-          {{#each event in EventData}}
-          <option value="{{event.name}}">{{event.name}}</option>
-          {{/each}}
-        </select>
-  </div>
+            <h4 class="ui red dividing header">Date</h4>
+            <div class="two red fields">
+                <div class="field">
+                    <label style="color: red;">Start Date</label>
+                    <input name="startDate" type="date" style="color: red; background-color : #5c6275;">
+                    {{#if displayFieldError 'startDate' }}
+                    <div class="ui error message">
+                        <p>Please specify the start date of this event.</p>
+                    </div>
+                    {{/if}}
+                </div>
 
-      <button class="ui button" type="submit">Create</button>
-    </form>
-  </div>
+                <div class="red field">
+                    <label style="color: red;">End Date</label>
+                    <input name="endDate" type="date" style="color: red; background-color : #5c6275;">
+                    {{#if displayFieldError 'endDate' }}
+                    <div class="ui error message">
+                        <p>Please specify the end date of this event.</p>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            <h4 class="ui red dividing header">Dependencies</h4>
+            <div class="field">
+                <select multiple="" class="ui dropdown" id="dependencies" name="dependencies">
+                    <option value="">Select Dependencies</option>
+                    {{#each event in EventData}}
+                    <option value="{{event.name}}">{{event.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <button class="ui red button" type="submit">Create</button>
+        </form>
+    </div>
+
 </template>
