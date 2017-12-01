@@ -1,6 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { _ } from 'meteor/underscore';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 import { EventData, EventDataSchema } from '../../api/eventdata/eventdata.js';
 
 /* eslint-disable no-param-reassign */
@@ -67,13 +68,26 @@ Template.Create_Event_Modal.events({
     const cleanData = EventDataSchema.clean(newEventData);
     // Determine validity.
     instance.context.validate(cleanData);
-    if (instance.context.isValid() && (startDate < endDate)) {
+    // 
+    // let valid = true;
+    //
+    // for (let i = 0; i < dependencies.length; i++) {
+    //   try {
+    //     if (EventData.findOne({ name: dependencies[i] }).startDate < startDate) {
+    //       valid = false;
+    //     }
+    //   } catch (e) {
+    //     //
+    //   }
+    // }
+    if (instance.context.isValid() && (startDate < endDate) && valid) {
       const id = EventData.insert(cleanData);
       instance.messageFlags.set(displaySuccessMessage, id);
       instance.messageFlags.set(displayErrorMessages, false);
       instance.find('form').reset();
       $('#create-event-modal').modal('hide');
       $('#dependencies').dropdown('clear');
+      FlowRouter.reload();
     } else {
       instance.messageFlags.set(displaySuccessMessage, false);
       instance.messageFlags.set(displayErrorMessages, true);

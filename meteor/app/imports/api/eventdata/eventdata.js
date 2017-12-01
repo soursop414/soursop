@@ -31,6 +31,31 @@ export const EventDataSchema = new SimpleSchema({
     type: [String],
     optional: true,
   },
+  ef: {
+    label: 'EF',
+    type: Number,
+    optional: true,
+  },
+  es: {
+    label: 'ES',
+    type: Number,
+    optional: true,
+  },
+  lf: {
+    label: 'LF',
+    type: Number,
+    optional: true,
+  },
+  ls: {
+    label: 'LS',
+    type: Number,
+    optional: true,
+  },
+  slack: {
+    label: 'slack',
+    type: Number,
+    optional: true,
+  },
 }, { tracker: Tracker });
 
 EventData.attachSchema(EventDataSchema);
