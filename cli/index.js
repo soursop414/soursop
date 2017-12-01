@@ -72,12 +72,8 @@ function recursiveAddition(array, node) {
 /* base case */
   if(node.dependencies.length == 0) {
     return duration;
-<<<<<<< HEAD
-  }else {
     /* if there is only one task in its dependency */
-=======
   } else {
->>>>>>> 4df1ba3877608543461de84f5cf0c57737e9c72e
       if(node.dependencies.length <= 1) {
         node = nodeWithName(array, node.dependencies[0]);
         return duration + recursiveAddition(array, node);
@@ -102,10 +98,7 @@ function recursiveAddition(array, node) {
   }
 }
 
-<<<<<<< HEAD
 /* retrieve the node with the name field name */
-=======
->>>>>>> 4df1ba3877608543461de84f5cf0c57737e9c72e
 function nodeWithName(array, name) {
   for(var i = 0; i < array.length; i++) {
     if(array[i].name == name) {
