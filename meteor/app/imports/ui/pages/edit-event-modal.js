@@ -1,19 +1,21 @@
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { _ } from 'meteor/underscore';
+import { Session } from 'meteor/session'
 import { EventData, EventDataSchema } from '../../api/eventdata/eventdata.js';
+
 
 /* eslint-disable no-param-reassign */
 
 const displaySuccessMessage = 'displaySuccessMessage';
 const displayErrorMessages = 'displayErrorMessages';
-const createContext = EventDataSchema.namedContext('Create_Event_Modal');
+const createContext = EventDataSchema.namedContext('Edit_Event_Modal');
 
 function calcDuration(date2, date1) {
   return Math.round(Math.abs((date2 - date1) / (24 * 60 * 60 * 1000)));
 }
 
-Template.Create_Event_Modal.onCreated(function onCreated() {
+Template.Edit_Event_Modal.onCreated(function onCreated() {
   this.messageFlags = new ReactiveDict();
   this.messageFlags.set(displaySuccessMessage, false);
   this.messageFlags.set(displayErrorMessages, false);
@@ -21,7 +23,7 @@ Template.Create_Event_Modal.onCreated(function onCreated() {
 });
 
 
-Template.Create_Event_Modal.helpers({
+Template.Edit_Event_Modal.helpers({
   successClass() {
     return Template.instance().messageFlags.get(displaySuccessMessage) ? 'success' : '';
   },
@@ -38,21 +40,33 @@ Template.Create_Event_Modal.helpers({
   EventData() {
     return EventData.find();
   },
+  EventDataID() {
+    return EventData.findOne({ _id: Session.get('editID') });
+  },
+  EventEndDate() {
+    let endDate = EventData.findOne({ _id: Session.get('editID') }).endDate;
+    return endDate.toISOString().split('T')[0];
+  },
+  EventStartDate() {
+    let startDate = EventData.findOne({ _id: Session.get('editID') }).startDate;
+    return startDate.toISOString().split('T')[0];
+  },
 });
 
-Template.Create_Event_Modal.onRendered(function enableSemantic() {
+Template.Edit_Event_Modal.onRendered(function enableSemantic() {
   const instance = this;
   instance.$('#dependencies').dropdown();
+  console.log(Session.get('editID'));
 });
 
-Template.Create_Event_Modal.events({
+Template.Edit_Event_Modal.events({
   'submit .create-event-form'(event, instance) {
     event.preventDefault();
     // Get name (text field)
     const name = event.target.Name.value;
     const startDate = Date.parse(event.target.startDate.value);
     const endDate = Date.parse(event.target.endDate.value);
-    const dependenciesValue = instance.$('#dependencies').dropdown('get value');
+    const dependenciesValue = $('#dependencies').dropdown('get value');
     const dependencies = [];
     const duration = calcDuration(startDate, endDate);
 
@@ -72,10 +86,9 @@ Template.Create_Event_Modal.events({
 
     for (let i = 0; i < dependencies.length; i++) {
       try {
-        console.log(`startDate ${startDate}`);
         if (startDate < EventData.findOne({ name: dependencies[i] }).endDate) {
           valid = false;
-          Template.instance().context.addInvalidKeys([{ name: 'startDate', type: 'required', value: null }]);
+          console.log('not valid');
         }
       } catch (e) {
         //
@@ -83,7 +96,6 @@ Template.Create_Event_Modal.events({
     }
     if (instance.context.isValid() && (startDate < endDate) && valid) {
       const id = EventData.insert(cleanData);
-      console.log(cleanData);
       instance.messageFlags.set(displaySuccessMessage, id);
       instance.messageFlags.set(displayErrorMessages, false);
       instance.find('form').reset();

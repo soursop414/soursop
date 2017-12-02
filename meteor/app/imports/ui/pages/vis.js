@@ -2,26 +2,11 @@
 
 import { Template } from 'meteor/templating';
 import { DataSet, Timeline } from 'vis';
+import { FlowRouter } from 'meteor/kadira:flow-router';
+import { Session } from 'meteor/session'
 import { EventData } from '../../api/eventdata/eventdata.js';
 
-
-Template.Vis.onRendered(function onRendered() {
-  // Critical path calculation
-  let testTaskArray = [];
-  let eventData = EventData.find().fetch();
-  let tempTask = [];
-  // create taskArray from EventData database
-  for (let i = 0; i < eventData.length; i++) {
-    tempTask[0] = eventData[i].name;
-    tempTask[1] = eventData[i].duration;
-    tempTask[2] = eventData[i].dependencies;
-    if (tempTask[2][0] === null) {
-      tempTask[2] = [];
-    }
-
-    testTaskArray.push(tempTask);
-    tempTask = [];
-  }
+let timeline;
 // Critical path calculation
 
   function criticalPath(inputArray) {
@@ -209,6 +194,24 @@ function slackCalcs(taskArray)
 	return tasks;
 }
 
+Template.Vis.onRendered(function onRendered() {
+  // Critical path calculation
+  let testTaskArray = [];
+  let eventData = EventData.find().fetch();
+  let tempTask = [];
+  // create taskArray from EventData database
+  for (let i = 0; i < eventData.length; i++) {
+    tempTask[0] = eventData[i].name;
+    tempTask[1] = eventData[i].duration;
+    tempTask[2] = eventData[i].dependencies;
+    if (tempTask[2][0] === null) {
+      tempTask[2] = [];
+    }
+
+    testTaskArray.push(tempTask);
+    tempTask = [];
+  }
+
   let resultTaskArray = slackCalcs(criticalPath(testTaskArray));
 
 
@@ -238,7 +241,10 @@ function slackCalcs(taskArray)
   }
 
   // Create a DataSet (allows two way data-binding)
-  const items = new DataSet(dataSet);
+  // const items = new DataSet(dataSet);
+
+
+  const items = new DataSet([{ id: 0, content: 'nulll', start: '2017-11-30', end: '2017-12-01' }])
   // const items = new DataSet([
   //   { id: 1, content: 'item 1', start: '2014-04-20', end: '2014-04-22', className: 'cp' },
   //   { id: 2, content: 'item 2', start: '2014-04-14', end: '2014-04-16', className: 'cp' },
@@ -251,12 +257,63 @@ function slackCalcs(taskArray)
   const options = {};
 
   // Create a Timeline
-  const timeline = new Timeline(container, items, options);
+  timeline = new Timeline(container, items, options);
+  timeline.setItems([]);
+// onclick
+  timeline.on('click', function (properties)
+  {
+	// console.log(properties.item);
+  let editID = EventData.find().fetch()[properties.item - 1]._id
+  Session.set({ editID: editID });
+  });
+});
 
-  // //onclick
-  // timeline.on('click', function (properties)
-  // {
-  // console.log(properties.item);
-  // //timeline.setItems(newItems); //can edit the dataset
-  // });
+Template.Vis.events({
+  'click .update'(event, instance) {
+    // Critical path calculation
+    let testTaskArray = [];
+    let eventData = EventData.find().fetch();
+    let tempTask = [];
+    // create taskArray from EventData database
+    for (let i = 0; i < eventData.length; i++) {
+      tempTask[0] = eventData[i].name;
+      tempTask[1] = eventData[i].duration;
+      tempTask[2] = eventData[i].dependencies;
+      if (tempTask[2][0] === null) {
+        tempTask[2] = [];
+      }
+
+      testTaskArray.push(tempTask);
+      tempTask = [];
+    }
+
+    let resultTaskArray = slackCalcs(criticalPath(testTaskArray));
+
+    let updatedTempTask;
+
+    for (let i = 0; i < resultTaskArray.length; i++) {
+      tempTask = EventData.findOne({ name: resultTaskArray[i].name });
+      EventData.update({ _id: tempTask._id }, { $set: { ef: resultTaskArray[i].EF, es: resultTaskArray[i].ES, lf: resultTaskArray[i].LF, ls: resultTaskArray[i].LS, slack: resultTaskArray[i].slack } });
+    }
+
+    eventData = EventData.find().fetch();
+    let dataSet = [];
+    let id, content, start, end, className;
+
+    for (let i = 0; i < eventData.length; i++) {
+      id = i + 1;
+      content = eventData[i].name;
+      start = eventData[i].startDate;
+      end = eventData[i].endDate;
+      if (eventData[i].slack === 0) {
+        className = 'cp';
+      }
+      dataSet.push({ id, content, start, end, className });
+    }
+
+    timeline.setItems(dataSet);
+  },
+  'click #visualization'(event, instance) {
+    $('#edit-event-modal').modal({ blurring: true }).modal('show');
+  }
 });
