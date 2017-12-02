@@ -307,6 +307,8 @@ Template.Vis.events({
       end = eventData[i].endDate;
       if (eventData[i].slack === 0) {
         className = 'cp';
+      } else {
+        className = null;
       }
       dataSet.push({ id, content, start, end, className });
     }

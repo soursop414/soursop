@@ -72,7 +72,6 @@ Template.Create_Event_Modal.events({
 
     for (let i = 0; i < dependencies.length; i++) {
       try {
-        console.log(`startDate ${startDate}`);
         if (startDate < EventData.findOne({ name: dependencies[i] }).endDate) {
           valid = false;
           Template.instance().context.addInvalidKeys([{ name: 'startDate', type: 'required', value: null }]);
